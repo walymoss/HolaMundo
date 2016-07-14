@@ -1,29 +1,36 @@
 package app.walymoss.com.holamundo;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.renderscript.Double2;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener, SensorEventListener{
+    GridLayout gr;
+    SensorManager sm;
+    Sensor sensor;
 
-    TextView txtValor;
-    Button btnCero;
-    Button btnUno;
-    Button btnDos;
-    Button btnTres;
-    Button btnCuatro;
-    Button btnCinco;
-    Button btnSeis;
-    Button btnSiete;
-    Button btnOcho;
-    Button btnNueve;
-    Button btnDelete;
+
+    TextView txtValor, btnCero, btnUno, btnDos, btnTres, btnCuatro, btnCinco, btnSeis, btnSiete, btnOcho,
+            btnNueve, btnDelete, btnSuma, btnResta, btnMultiplicacion, btnDivision, btnIgual, btnCorreccion;
+    Double primerValor, segundoValor, resultado;
+    String operacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        gr = (GridLayout) findViewById(R.id.gridLayout);
+        sm = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
 
         txtValor = (TextView)findViewById(R.id.txtValor);
         txtValor.setText("0");
@@ -67,6 +79,47 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         btnDelete = (Button)findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(this);
+
+        btnSuma = (Button)findViewById(R.id.btnSuma);
+        btnSuma.setOnClickListener(this);
+
+        btnResta = (Button)findViewById(R.id.btnResta);
+        btnResta.setOnClickListener(this);
+
+        btnMultiplicacion = (Button)findViewById(R.id.btnMultiplicacion);
+        btnMultiplicacion.setOnClickListener(this);
+
+        btnDivision = (Button)findViewById(R.id.btnDivision);
+        btnDivision.setOnClickListener(this);
+
+        btnIgual = (Button)findViewById(R.id.btnIgual);
+        btnIgual.setOnClickListener(this);
+
+        btnCorreccion = (Button)findViewById(R.id.btnCorreccion);
+        btnCorreccion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("Está seguro que desea borrar el contenido?"); //Message
+                builder.setIcon(android.R.drawable.ic_dialog_alert); //Icon
+                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { //Yes Button
+                        txtValor.setText("0");
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { //No Button
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alert = builder.create(); //create
+                alert.show(); //show
+            }
+        });
+
+
     }
 
     @Override
@@ -131,6 +184,54 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     txtValor.setText("0");
                 }
                 break;
+            case R.id.btnSuma:
+                operacion = "Suma";
+                primerValor = Double.parseDouble(txtValor.getText().toString());
+                txtValor.setText("");
+                break;
+            case R.id.btnResta:
+                operacion = "Resta";
+                primerValor = Double.parseDouble(txtValor.getText().toString());
+                txtValor.setText("");
+                break;
+            case R.id.btnMultiplicacion:
+                operacion = "Multiplicacion";
+                primerValor = Double.parseDouble(txtValor.getText().toString());
+                txtValor.setText("");
+                break;
+            case R.id.btnDivision:
+                operacion = "Division";
+                primerValor = Double.parseDouble(txtValor.getText().toString());
+                txtValor.setText("");
+                break;
+            case R.id.btnIgual:
+                segundoValor = Double.parseDouble(txtValor.getText().toString());
+                switch (operacion){
+                    case "Suma":
+                        resultado = primerValor + segundoValor;
+                        txtValor.setText(resultado.toString());
+                        break;
+                    case "Resta":
+                        resultado = primerValor - segundoValor;
+                        txtValor.setText(resultado.toString());
+                        break;
+                    case "Multiplicacion":
+                        resultado = primerValor * segundoValor;
+                        txtValor.setText(resultado.toString());
+                        break;
+                    case "Division":
+                        if (segundoValor == 0){
+                            Toast.makeText(this.getApplicationContext(),"No sea pendejo, la división entre cero no existe", Toast.LENGTH_SHORT).show();
+                        }else{
+                            resultado = primerValor / segundoValor;
+                            txtValor.setText(resultado.toString());
+                        }
+                        break;
+                }
+                Intent intent = new Intent(MainActivity.this, ResultadoActivity.class);
+                intent.putExtra("resultado", resultado.toString());
+                startActivity(intent);
+                break;
         }
     }
 
@@ -143,6 +244,23 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         {
             txtValor.setText(txtValor.getText() + val);
         }
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        String texto = String.valueOf(event.values[0]);
+        float valor = Float.parseFloat(texto);
+        if (valor == 0){
+            gr.setBackgroundColor(Color.BLUE);
+        }
+        else {
+            gr.setBackgroundColor(Color.YELLOW);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 }
