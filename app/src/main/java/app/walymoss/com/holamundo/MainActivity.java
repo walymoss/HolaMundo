@@ -25,9 +25,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     GridLayout gr;
     SensorManager sm;
     Sensor sensor;
-
-
-    TextView txtValor, btnCero, btnUno, btnDos, btnTres, btnCuatro, btnCinco, btnSeis, btnSiete, btnOcho,
+    TextView txtValor;
+    Button btnCero, btnUno, btnDos, btnTres, btnCuatro, btnCinco, btnSeis, btnSiete, btnOcho,
             btnNueve, btnDelete, btnSuma, btnResta, btnMultiplicacion, btnDivision, btnIgual, btnCorreccion;
     Double primerValor, segundoValor, resultado;
     String operacion;
