@@ -247,6 +247,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        sm.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+    @Override
     public void onSensorChanged(SensorEvent event) {
         String texto = String.valueOf(event.values[0]);
         float valor = Float.parseFloat(texto);
