@@ -22,5 +22,6 @@
     <string name="strDivision">/</string>
     <string name="strIgual">=</string>
     <string name="strErrorDivisionCero">La división entre cero no existe</string>
+    <string name="strIrAWebView">Ir a WebView</string>
 
 </resources>

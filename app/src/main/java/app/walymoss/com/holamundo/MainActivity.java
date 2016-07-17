@@ -12,6 +12,7 @@ import android.renderscript.Double2;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +28,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     Sensor sensor;
     TextView txtValor;
     Button btnCero, btnUno, btnDos, btnTres, btnCuatro, btnCinco, btnSeis, btnSiete, btnOcho,
-            btnNueve, btnDelete, btnSuma, btnResta, btnMultiplicacion, btnDivision, btnIgual, btnCorreccion;
+            btnNueve, btnDelete, btnSuma, btnResta, btnMultiplicacion, btnDivision, btnIgual,
+            btnCorreccion, btnWebView;
     Double primerValor, segundoValor, resultado;
     String operacion;
+    String myTag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             }
         });
 
+        btnWebView = (Button)findViewById(R.id.irAWebView);
+        btnWebView.setOnClickListener(this);
+
 
     }
 
@@ -146,36 +153,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btnCero:
-                ActualizarValor("0");
-                break;
-            case R.id.btnUno:
-                ActualizarValor("1");
-                break;
-            case R.id.btnDos:
-                ActualizarValor("2");
-                break;
-            case R.id.btnTres:
-                ActualizarValor("3");
-                break;
-            case R.id.btnCuatro:
-                ActualizarValor("4");
-                break;
-            case R.id.btnCinco:
-                ActualizarValor("5");
-                break;
-            case R.id.btnSeis:
-                ActualizarValor("6");
-                break;
-            case R.id.btnSiete:
-                ActualizarValor("7");
-                break;
-            case R.id.btnOcho:
-                ActualizarValor("8");
-                break;
-            case R.id.btnNueve:
-                ActualizarValor("9");
-                break;
+            case R.id.btnCero: ActualizarValor("0"); break;
+            case R.id.btnUno: ActualizarValor("1"); break;
+            case R.id.btnDos: ActualizarValor("2"); break;
+            case R.id.btnTres: ActualizarValor("3"); break;
+            case R.id.btnCuatro: ActualizarValor("4"); break;
+            case R.id.btnCinco: ActualizarValor("5"); break;
+            case R.id.btnSeis: ActualizarValor("6"); break;
+            case R.id.btnSiete: ActualizarValor("7"); break;
+            case R.id.btnOcho: ActualizarValor("8"); break;
+            case R.id.btnNueve: ActualizarValor("9"); break;
             case R.id.btnDelete:
                 txtValor.setText(txtValor.getText().subSequence(0, txtValor.getText().length()-1));
                 if(txtValor.getText().length() == 0)
@@ -183,26 +170,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                     txtValor.setText("0");
                 }
                 break;
-            case R.id.btnSuma:
-                operacion = "Suma";
-                primerValor = Double.parseDouble(txtValor.getText().toString());
-                txtValor.setText("");
-                break;
-            case R.id.btnResta:
-                operacion = "Resta";
-                primerValor = Double.parseDouble(txtValor.getText().toString());
-                txtValor.setText("");
-                break;
-            case R.id.btnMultiplicacion:
-                operacion = "Multiplicacion";
-                primerValor = Double.parseDouble(txtValor.getText().toString());
-                txtValor.setText("");
-                break;
-            case R.id.btnDivision:
-                operacion = "Division";
-                primerValor = Double.parseDouble(txtValor.getText().toString());
-                txtValor.setText("");
-                break;
+            case R.id.btnSuma: operacion = "Suma"; EstablecerPrimerValor(); break;
+            case R.id.btnResta: operacion = "Resta"; EstablecerPrimerValor(); break;
+            case R.id.btnMultiplicacion: operacion = "Multiplicacion"; EstablecerPrimerValor(); break;
+            case R.id.btnDivision: operacion = "Division"; EstablecerPrimerValor(); break;
             case R.id.btnIgual:
                 segundoValor = Double.parseDouble(txtValor.getText().toString());
                 switch (operacion){
@@ -220,21 +191,28 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
                         break;
                     case "Division":
                         if (segundoValor == 0){
-                            Toast.makeText(this.getApplicationContext(),"No sea pendejo, la división entre cero no existe", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this.getApplicationContext(), R.string.strErrorDivisionCero, Toast.LENGTH_SHORT).show();
                         }else{
                             resultado = primerValor / segundoValor;
                             txtValor.setText(resultado.toString());
                         }
                         break;
                 }
-                Intent intent = new Intent(MainActivity.this, ResultadoActivity.class);
-                intent.putExtra("resultado", resultado.toString());
-                startActivity(intent);
+                if(segundoValor != 0) {
+                    Intent intent = new Intent(MainActivity.this, ResultadoActivity.class);
+                    intent.putExtra("resultado", resultado.toString());
+                    startActivity(intent);
+                }
+                break;
+            case R.id.irAWebView:
+                Intent webViewIntent = new Intent(MainActivity.this, WebViewActivity.class);
+                startActivity(webViewIntent);
                 break;
         }
     }
 
     private void ActualizarValor(String val){
+        Log.w(myTag,"El valor a actualizar es: " + val);
         if (txtValor.getText().equals("0"))
         {
             txtValor.setText(val);
@@ -245,6 +223,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
 
     }
+
+    private void EstablecerPrimerValor(){
+        primerValor = Double.parseDouble(txtValor.getText().toString());
+        txtValor.setText("");
+    }
+
 
     @Override
     protected void onResume() {
