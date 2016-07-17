@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.renderscript.Double2;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -37,94 +38,101 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
 
-        gr = (GridLayout) findViewById(R.id.gridLayout);
-        sm = (SensorManager)getSystemService(SENSOR_SERVICE);
-        sensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
+            gr = (GridLayout) findViewById(R.id.gridLayout);
+            sm = (SensorManager)getSystemService(SENSOR_SERVICE);
+            sensor = sm.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-        txtValor = (TextView)findViewById(R.id.txtValor);
-        txtValor.setText("0");
+            txtValor = (TextView)findViewById(R.id.txtValor);
+            txtValor.setText("0");
 
-        btnCero = (Button)findViewById(R.id.btnCero);
-        btnCero.setOnClickListener(this);
+            //region OnClickListener
+            btnCero = (Button)findViewById(R.id.btnCero);
+            btnCero.setOnClickListener(this);
 
-        btnUno = (Button)findViewById(R.id.btnUno);
-        btnUno.setOnClickListener(this);
+            btnUno = (Button)findViewById(R.id.btnUno);
+            btnUno.setOnClickListener(this);
 
-        btnDos = (Button)findViewById(R.id.btnDos);
-        btnDos.setOnClickListener(this);
+            btnDos = (Button)findViewById(R.id.btnDos);
+            btnDos.setOnClickListener(this);
 
-        btnTres = (Button)findViewById(R.id.btnTres);
-        btnTres.setOnClickListener(this);
+            btnTres = (Button)findViewById(R.id.btnTres);
+            btnTres.setOnClickListener(this);
 
-        btnCuatro = (Button)findViewById(R.id.btnCuatro);
-        btnCuatro.setOnClickListener(this);
+            btnCuatro = (Button)findViewById(R.id.btnCuatro);
+            btnCuatro.setOnClickListener(this);
 
-        btnCinco = (Button)findViewById(R.id.btnCinco);
-        btnCinco.setOnClickListener(this);
+            btnCinco = (Button)findViewById(R.id.btnCinco);
+            btnCinco.setOnClickListener(this);
 
-        btnSeis = (Button)findViewById(R.id.btnSeis);
-        btnSeis.setOnClickListener(this);
+            btnSeis = (Button)findViewById(R.id.btnSeis);
+            btnSeis.setOnClickListener(this);
 
-        btnSiete = (Button)findViewById(R.id.btnSiete);
-        btnSiete.setOnClickListener(this);
+            btnSiete = (Button)findViewById(R.id.btnSiete);
+            btnSiete.setOnClickListener(this);
 
-        btnOcho = (Button)findViewById(R.id.btnOcho);
-        btnOcho.setOnClickListener(this);
+            btnOcho = (Button)findViewById(R.id.btnOcho);
+            btnOcho.setOnClickListener(this);
 
-        btnNueve = (Button)findViewById(R.id.btnNueve);
-        btnNueve.setOnClickListener(this);
+            btnNueve = (Button)findViewById(R.id.btnNueve);
+            btnNueve.setOnClickListener(this);
 
-        btnDelete = (Button)findViewById(R.id.btnDelete);
-        btnDelete.setOnClickListener(this);
+            btnDelete = (Button)findViewById(R.id.btnDelete);
+            btnDelete.setOnClickListener(this);
 
-        btnSuma = (Button)findViewById(R.id.btnSuma);
-        btnSuma.setOnClickListener(this);
+            btnSuma = (Button)findViewById(R.id.btnSuma);
+            btnSuma.setOnClickListener(this);
 
-        btnResta = (Button)findViewById(R.id.btnResta);
-        btnResta.setOnClickListener(this);
+            btnResta = (Button)findViewById(R.id.btnResta);
+            btnResta.setOnClickListener(this);
 
-        btnMultiplicacion = (Button)findViewById(R.id.btnMultiplicacion);
-        btnMultiplicacion.setOnClickListener(this);
+            btnMultiplicacion = (Button)findViewById(R.id.btnMultiplicacion);
+            btnMultiplicacion.setOnClickListener(this);
 
-        btnDivision = (Button)findViewById(R.id.btnDivision);
-        btnDivision.setOnClickListener(this);
+            btnDivision = (Button)findViewById(R.id.btnDivision);
+            btnDivision.setOnClickListener(this);
 
-        btnIgual = (Button)findViewById(R.id.btnIgual);
-        btnIgual.setOnClickListener(this);
+            btnIgual = (Button)findViewById(R.id.btnIgual);
+            btnIgual.setOnClickListener(this);
 
-        btnCorreccion = (Button)findViewById(R.id.btnCorreccion);
-        btnCorreccion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("Está seguro que desea borrar el contenido?"); //Message
-                builder.setIcon(android.R.drawable.ic_dialog_alert); //Icon
-                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { //Yes Button
-                        txtValor.setText("0");
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { //No Button
-                        dialog.cancel();
-                    }
-                });
-                AlertDialog alert = builder.create(); //create
-                alert.show(); //show
-            }
-        });
+            btnCorreccion = (Button)findViewById(R.id.btnCorreccion);
+            btnCorreccion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Está seguro que desea borrar el contenido?"); //Message
+                    builder.setIcon(android.R.drawable.ic_dialog_alert); //Icon
+                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { //Yes Button
+                            txtValor.setText("0");
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) { //No Button
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alert = builder.create(); //create
+                    alert.show(); //show
+                }
+            });
 
-        btnWebView = (Button)findViewById(R.id.irAWebView);
-        btnWebView.setOnClickListener(this);
+            btnWebView = (Button)findViewById(R.id.irAWebView);
+            btnWebView.setOnClickListener(this);
 
+            //endregion
+        }
+        catch (Exception ex){
+            throw ex;
+        }
 
     }
 
